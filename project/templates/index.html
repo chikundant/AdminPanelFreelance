@@ -3,69 +3,74 @@
 <script src="/static/js/switcher.js"></script>
 {% extends 'base.html' %}
 {% block content %}
-<div class="users_block">
-    <div class="switcher">
-        <div class="search_window_button" id = 'pressed'>
-            <p>Найти</p>
+<div class="wrapper">
+    <div class="users_block">
+        <div class="switcher">
+            <div class="search_window_button" id = 'pressed'>
+                <p>Найти</p>
+            </div>
+            <div class="add_window_button" id ='unpressed'>
+                <p>Добавить</p>
+            </div>
         </div>
-        <div class="add_window_button" id ='unpressed'>
-            <p>Добавить</p>
+        <div class="search_block " id="">
+            <form class="search" action="" method="POST">
+                <ul class="search_menu">
+                    {{search_form.type.label}}
+                    {{search_form.type(class='field')}}
+
+                    {{search_form.input(class= 'field')}}
+                </ul>
+                {{search_form.submit(class='button')}}
+            </form>
+            <div class="result">
+                {% for user in users%}
+                {% include  '_user.html'%}
+                {% endfor %}
+            </div>
         </div>
-    </div>
-    <div class="search_block " id="">
-        <form class="search" action="" method="POST">
-            <ul class="search_menu">
-                {{search_form.type.label}}
-                {{search_form.type(class='field')}}
 
-                {{search_form.input(class= 'field')}}
-            </ul>
-            {{search_form.submit(class='button')}}
-        </form>
-        <div class="result">
-            {% for user in users%}
-            {% include  '_user.html'%}
-            {% endfor %}
+        <div class="add_user_block" id="hide">
+            <h1>Добавить нового юзера</h1>
+            <form class="input_user_information" action="" method="POST">
+                {{ add_form.csrf_token }}
+                <p>
+                    {{add_form.name.label}}
+                    {{add_form.name(class='add_field')}}
+                    {% for error in add_form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+
+                <p>
+                    {{add_form.email.label}}
+                    {{add_form.email(class='add_field')}}
+                    {% for error in add_form.email.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+
+                <p>
+                    {{add_form.phone.label}}
+                    {{add_form.phone(class='add_field')}}
+                    {% for error in add_form.phone.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{add_form.birthday.label}}
+                    {{add_form.birthday(class='add_field')}}
+                </p>
+                <p>
+                    {{add_form.comment.label}}
+                    {{add_form.comment(class='add_field')}}
+                </p>
+
+                <p>
+                    {{add_form.submit(class='add_button')}}
+                </p>
+            </form>
         </div>
-    </div>
-
-    <div class="add_user_block" id="hide">
-        <h1>Добавить нового юзера</h1>
-        <form class="input_user_information" action="" method="POST">
-            {{ add_form.csrf_token }}
-            <p>
-                {{add_form.name.label}}
-                {{add_form.name(class='add_field')}}
-                {% for error in add_form.name.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-
-            <p>
-                {{add_form.email.label}}
-                {{add_form.email(class='add_field')}}
-                {% for error in add_form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-
-            <p>
-                {{add_form.phone.label}}
-                {{add_form.phone(class='add_field')}}
-                {% for error in add_form.phone.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-
-            <p>
-                {{add_form.comment.label}}
-                {{add_form.comment(class='add_field')}}
-            </p>
-
-            <p>
-                {{add_form.submit(class='add_button')}}
-            </p>
-        </form>
     </div>
 </div>
 {% endblock %}

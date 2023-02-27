@@ -19,15 +19,16 @@ class Admin(UserMixin, db.Model):
         return '<User {}>'.format(self.username)
 
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     email = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(64), unique=True)
     date = db.Column(db.Date)
+    birthday = db.Column(db.Date)
     additional_comment = db.Column(db.String(64))
 
-    game = db.relationship('Game', backref='Game.friend_id', primaryjoin='User.id==Game.user_id', lazy='dynamic')
 
     def __repr__(self):
         return '<User {} {}>'.format(self.id, self.name)
@@ -37,13 +38,36 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_comment = db.Column(db.String(250))
     personal_comment = db.Column(db.String(250))
+    cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
     #conclusion = db.Column(db.String(250))
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref="users")
 
     def __repr__(self):
         return '<User {} {}>'.format(self.id, 'Game')
 
+
+class Type(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250))
+    description = db.Column(db.String(250))
+
+    cell = db.relationship('Cell', backref='Cell.type_id', primaryjoin='Type.id==Cell.type_id', lazy='dynamic')
+
+
+class Cell(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250))
+    description = db.Column(db.String(250))
+
+    cell = db.relationship('Game', backref='Game.cell_id', primaryjoin='Cell.id==Game.cell_id', lazy='dynamic')
+
+    type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
+    type = db.relationship("Type", backref="cells")
+
+    def __repr__(self):
+        return '<Cell {} {}>'.format(self.id, 'Cell')
 
 
 @login.user_loader

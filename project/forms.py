@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, SelectField, SearchField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, SelectField, SearchField, \
+    DateField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, Optional
 from project.models import Admin, User
 
@@ -35,6 +36,7 @@ class AddUserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     email = EmailField('Email', validators=[Optional()])
     phone = StringField('Phone', validators=[Optional()])
+    birthday = DateField('Birthday')
     comment = StringField('Comment')
 
     submit = SubmitField('Save')
@@ -48,3 +50,11 @@ class AddUserForm(FlaskForm):
         user = User.query.filter_by(phone=phone.data).first()
         if user is not None:
             raise ValidationError('Current phone already exists')
+
+
+class AddGameForm(FlaskForm):
+    cell_id = StringField('Номер клетки', validators=[DataRequired()])
+    user_comment = TextAreaField('Комментарий человека')
+    my_comment = TextAreaField('Мой комментарий')
+
+    submit = SubmitField('Создать')

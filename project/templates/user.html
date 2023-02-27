@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="/static/css/user.css">
+{% extends 'base.html' %}
+{% block content %}
+<div class="current_user_block">
+    <aside class="user">
+        <div class="part">
+            <div>
+                <h1>Имя:</h1>
+                <p>{{ user.name }}</p>
+            </div>
+
+        </div>
+        <div class="part">
+            <h1>Email:</h1>
+            <p>{{ user.email }}</p>
+        </div>
+        <div class="part">
+            <h1>Номер телефона:</h1>
+            <p>{{ user.phone }}</p>
+        </div>
+        <div class="part">
+            <h1>Дата добавления:</h1>
+            <p>{{ user.date }}</p>
+        </div>
+        <div class="part">
+            <h1>День рождения:</h1>
+            <p>{{ user.birthday }}</p>
+        </div>
+        <div class="part">
+            <h1>Комментарий:</h1>
+            <p>{{ user.additional_comment }}</p>
+        </div>
+        <a href="">Отчет</a>
+    </aside>
+
+    <aside>
+        <h1>Клетки юзера</h1>
+    </aside>
+
+    <aside>
+        <form action="", method="POST">
+            <h1>Новая клетка</h1>
+            <p>
+                {{add_game_form.cell_id.label}}
+                {{add_game_form.cell_id}}
+            </p>
+            <p>
+                {{add_game_form.user_comment.label}}
+                {{add_game_form.user_comment}}
+            </p>
+            <p>
+                {{add_game_form.my_comment.label}}
+                {{add_game_form.my_comment}}
+            </p>
+            {{add_game_form.submit}}
+        </form>
+    </aside>
+</div>
+
+
+
+{% endblock %}

@@ -1,12 +1,9 @@
 .users_block{
 
     width: 70%;
-    height: 90vh;
+    height: 85vh;
     margin: 0px auto;
     margin-top: 50px;
-
-    
-    
 }
 
 .switcher{
@@ -28,19 +25,18 @@
 
 
 #pressed{
-    background-color: rgb(123, 223, 169);
-
+    background-color: rgb(92, 0, 167);
 }
 
 #unpressed{
-    background-color: rgb(92, 188, 137);
+    background-color: rgb(77, 0, 141);
 }
 
 
 .search{
     display: flex;
     height: 60px;
-    background-color: rgb(123, 223, 169);
+    background-color: rgb(92, 0, 167);
 
     border-radius: 0px 15px 15px 15px;
 
@@ -71,9 +67,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(123, 223, 169);
+    background-color: rgb(92, 0, 167);
     padding: 50px 25px 50px 25px;
     border-radius: 0px 15px 15px 15px;
+    color: white;
 }
 
 .input_user_information{
@@ -106,7 +103,7 @@
 
     border-radius: 10px;
 
-    color: rgb(106, 206, 153);
+    color: rgb(92, 0, 167);
 
     margin-top: 15px;
 }
@@ -133,10 +130,12 @@
 
 .search_window_button{
     border-radius: 15px 0px 0px 0px;
+    color: white;
 }
 
 .add_window_button{
     border-radius: 0px 15px 0px 0px;
+    color: white;
 }
 
 .button{
@@ -150,7 +149,7 @@
 
     border-radius: 10px;
 
-    color: rgb(106, 206, 153);
+    color: rgb(92, 0, 167);
 }
 
 .button:hover{
