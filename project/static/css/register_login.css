@@ -36,6 +36,8 @@ h1{
     border: 1px solid rgba(128, 128, 128, 0);
 
     border-radius: 10px;
+
+    color: white;
 }
 
 .button:hover{

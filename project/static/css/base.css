@@ -4,10 +4,35 @@
     padding: 0px;
     margin: 0px;
     font-family: 'Roboto', sans-serif;
+    text-decoration: none;
+    
 }
 
 .wrapper{
     width: 80%;
-    background-color: antiquewhite;
     margin: 0px auto;
+}
+
+.header_menu{
+
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgb(106, 206, 153);
+}
+
+.menu_block{
+    display: flex;
+    list-style: none;
+
+}
+.menu_item{
+    padding-right: 50px;
+    color: white;
+}
+.logo{
+    font-weight: 600;
+    color: white;
 }

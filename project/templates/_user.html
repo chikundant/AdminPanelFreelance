@@ -1,0 +1,28 @@
+<div href="/" class="table_block">
+    <table class="user_block">
+        <tbody>
+            <tr>
+                <th class="id">id</th>
+                <th class="name">Имя</th>
+                <th class="email">Email</th>
+                <th>Телефон</th>
+                <th>Дата</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td class="id">{{user.id}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.phone}}</td>
+                <td>{{user.date}}</td>
+                <td class="buttons">
+                    <a href="{{ url_for('user', id=user.id) }}" class="button">Юзер</a>
+                    <a href="{{ url_for('delete', id=user.id) }}" class="button">Удалить</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" class="comment">{{user.additional_comment}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

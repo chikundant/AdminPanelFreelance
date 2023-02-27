@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/base.css") }}">
     <title>ЛИЛА</title>
 </head> 
 <body>
     <main>
         <header>
             <div class = 'header_menu'>
-                <a href="{{url_for('index')}}">ITNotes</a>
+                <a href="{{url_for('index')}}" class="logo">ЛИЛА</a>
                 <ul class="menu_block">
-                    <li><a href="{{url_for('index')}}">Домой</a></li>
-                    <li><a href="">Изменить базу данных</a></li>
-                    <li><a href="{{url_for('logout')}}">Выйти</a></li>
+                    <li><a href="{{url_for('index')}}" class="menu_item">Домой</a></li>
+                    <li><a href="" class="menu_item">Изменить</a></li>
+                    <a href="{{url_for('logout')}}"  class="menu_item">Выйти</a>
                 </ul>
             </div>
         </header>
