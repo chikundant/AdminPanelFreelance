@@ -30,29 +30,32 @@
             <h1>Комментарий:</h1>
             <p>{{ user.additional_comment }}</p>
         </div>
-        <a href="">Отчет</a>
+        <a href="" class="link">Отчет</a>
     </aside>
 
-    <aside>
-        <h1>Клетки юзера</h1>
+    <aside class="users_cells">
+            {%for game in games%}
+            {% include '_game.html' %}
+            {% endfor %} 
+
     </aside>
 
-    <aside>
+    <aside class="add_game">
         <form action="", method="POST">
             <h1>Новая клетка</h1>
             <p>
                 {{add_game_form.cell_id.label}}
-                {{add_game_form.cell_id}}
+                {{add_game_form.cell_id(class='field')}}
             </p>
             <p>
                 {{add_game_form.user_comment.label}}
-                {{add_game_form.user_comment}}
+                {{add_game_form.user_comment(class='text_field')}}
             </p>
             <p>
                 {{add_game_form.my_comment.label}}
-                {{add_game_form.my_comment}}
+                {{add_game_form.my_comment(class='text_field')}}
             </p>
-            {{add_game_form.submit}}
+            {{add_game_form.submit(class='button')}}
         </form>
     </aside>
 </div>

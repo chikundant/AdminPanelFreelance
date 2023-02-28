@@ -5,24 +5,40 @@
     width: 90%;
     margin: 0px auto;
     margin-top: 50px;
+
 }
 
 aside{
     width: 33%;
     height: 70vh;
-    background-color: aqua;
+
     border-radius: 15px;
 
+    padding: 40px;
+    margin: 10px;   
+}
 
-    padding: 50px;
+.add_game{
+    background-color: rgb(92, 0, 167);
+    color: white;
 }
 
 .user{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    
+    background-color: rgb(92, 0, 167);
+    color: white;
 }
 
+.users_cells{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    word-break: break-all;
+    padding-top: 0px;
+}
 
 
 .button{
@@ -37,7 +53,7 @@ aside{
 
     border-radius: 10px;
 
-    color: rgb(106, 206, 153);
+    color: rgb(92, 0, 167);
 }
 
 .button:hover{
@@ -47,4 +63,35 @@ aside{
 
 .button:active{
     background-color: rgb(225, 225, 225);
+}
+
+.field{
+    height: 30px;
+    width: 100%;
+    border: 1px solid rgba(128, 128, 128, 0.382);
+    border-radius: 7px;    
+
+    padding-left: 10px;
+    margin-bottom: 15px;
+}
+
+
+.text_field{
+    min-height: 100px;
+    max-height: 200px;
+    
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid rgba(128, 128, 128, 0.382);
+    border-radius: 7px;    
+
+    padding-left: 10px;
+    margin-bottom: 15px;
+}
+
+.link{
+    display: block;
+    margin-top: 10px;
+    color: white;
+    text-decoration: underline;
 }

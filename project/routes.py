@@ -39,6 +39,8 @@ def user(id):
         db.session.add(game)
         db.session.commit()
 
+
+
     # type1 = Type(name='Name 3', description='Description 3')
     # type2 = Type(name='Name 4', description='Description 4')
     # type3 = Type(name='Name 5', description='Description 5')

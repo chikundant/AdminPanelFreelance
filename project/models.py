@@ -39,6 +39,9 @@ class Game(db.Model):
     user_comment = db.Column(db.String(250))
     personal_comment = db.Column(db.String(250))
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
+    cell = db.relationship("Cell", backref="cells")
+
+
     #conclusion = db.Column(db.String(250))
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
