@@ -42,26 +42,26 @@
         <form action="", method="post" id="hide" class="change_user">
             <div class="part">
                 {{add_user_form.name.label}}
-                {{add_user_form.name(value=user.name)}}
+                {{add_user_form.name(value=user.name, class='field')}}
             </div>
             <div class="part">
                 {{add_user_form.email.label}}
-                {{add_user_form.email(value=user.email)}}
+                {{add_user_form.email(value=user.email, class='field')}}
             </div>
             <div class="part">
                 {{add_user_form.phone.label}}
-                {{add_user_form.phone(value=user.phone)}}
+                {{add_user_form.phone(value=user.phone, class='field')}}
             </div>
             <div class="part">
                 {{add_user_form.birthday.label}}
-                {{add_user_form.birthday(value=user.birthday)}}
+                {{add_user_form.birthday(value=user.birthday, class='field')}}
             </div>
             <div class="part">
                 {{add_user_form.comment.label}}
-                {{add_user_form.comment(value=user.additional_comment)}}
+                {{add_user_form.comment(value=user.additional_comment, class='field')}}
             </div>
             <div class="part">
-                {{add_user_form.submit}}
+                {{add_user_form.submit(class='button')}}
             </div>
         </form>
     </aside>
