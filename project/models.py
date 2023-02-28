@@ -29,6 +29,7 @@ class User(db.Model):
     birthday = db.Column(db.Date)
     additional_comment = db.Column(db.String(64))
 
+    game = db.relationship('Game', backref='Game.user_id', cascade="all, delete")
 
     def __repr__(self):
         return '<User {} {}>'.format(self.id, self.name)

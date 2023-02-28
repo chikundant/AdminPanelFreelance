@@ -36,7 +36,7 @@ class AddUserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     email = EmailField('Email', validators=[Optional()])
     phone = StringField('Phone', validators=[Optional()])
-    birthday = DateField('Birthday')
+    birthday = DateField('Birthday', validators=[Optional()])
     comment = StringField('Comment')
 
     submit = SubmitField('Save')
@@ -58,3 +58,11 @@ class AddGameForm(FlaskForm):
     my_comment = TextAreaField('Мой комментарий')
 
     submit = SubmitField('Создать')
+
+
+class ChangeGameForm(FlaskForm):
+    cell_id = StringField(validators=[DataRequired()])
+    user_comment = StringField()
+    my_comment = StringField()
+
+    submit = SubmitField('Сохранить')

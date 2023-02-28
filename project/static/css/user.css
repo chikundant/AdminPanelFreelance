@@ -31,6 +31,18 @@ aside{
     
     background-color: rgb(92, 0, 167);
     color: white;
+    
+}
+.user_info::-webkit-scrollbar {
+    width: 0;
+}
+
+.user_info{
+    overflow-y: scroll;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .users_cells{
@@ -90,8 +102,13 @@ aside{
 }
 
 .link{
+    cursor: pointer;
     display: block;
     margin-top: 10px;
     color: white;
     text-decoration: underline;
 }
+
+
+
+
