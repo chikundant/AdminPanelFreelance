@@ -8,6 +8,13 @@
 
 }
 
+#hide{
+    display: none;
+}
+.user_info_block{
+    height: 90%;
+}
+
 aside{
     width: 33%;
     height: 70vh;
@@ -141,3 +148,11 @@ aside{
 }
 
 
+.change{
+    cursor: pointer;
+}
+
+.info_footer{
+    display: flex;
+    justify-content: space-between;
+}

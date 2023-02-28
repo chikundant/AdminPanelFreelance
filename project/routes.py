@@ -33,10 +33,23 @@ def index():
 @login_required
 def user(id):
     user = User.query.filter_by(id=id).first()
-    add_game_form = AddGameForm()
 
+    add_user_form = AddUserForm()
+    if add_user_form.is_submitted() and not (add_user_form.name.data is None):
+        print("1")
+        user.name = add_user_form.name.data
+        user.email = add_user_form.email.data
+        user.phone = add_user_form.phone.data
+        user.birthday = add_user_form.birthday.data
+        user.additional_comment = add_user_form.comment.data
+        db.session.commit()
+        return redirect(url_for('user', id=id))
+
+    add_game_form = AddGameForm()
     if add_game_form.is_submitted():
-        game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data, user_comment=add_game_form.user_comment.data)
+        print("2")
+        game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data,
+                    user_comment=add_game_form.user_comment.data)
         game.user_id = user.id
         db.session.add(game)
         db.session.commit()
@@ -44,7 +57,8 @@ def user(id):
 
     games = Game.query.filter_by(user_id=user.id).all()
 
-    return render_template('user.html', user=user, add_game_form=add_game_form, games=games)
+    return render_template('user.html', user=user, add_game_form=add_game_form, add_user_form=add_user_form,
+                           games=games)
 
 
 @app.route('/game/<id>', methods=['GET', 'POST'])
