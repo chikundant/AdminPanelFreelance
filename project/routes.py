@@ -34,7 +34,6 @@ def index():
 def user(id):
     user = User.query.filter_by(id=id).first()
     add_game_form = AddGameForm()
-    change_game_form = ChangeGameForm()
 
     if add_game_form.is_submitted():
         game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data, user_comment=add_game_form.user_comment.data)
@@ -45,13 +44,31 @@ def user(id):
 
     games = Game.query.filter_by(user_id=user.id).all()
 
-    return render_template('user.html', user=user, add_game_form=add_game_form, games=games,
-                           change_game_form=change_game_form)
+    return render_template('user.html', user=user, add_game_form=add_game_form, games=games)
 
 
 @app.route('/game/<id>', methods=['GET', 'POST'])
 def edit_game(id):
-    return str(Game.query.filter_by(id=id).all())
+    change_game_form = ChangeGameForm()
+    game = Game.query.filter_by(id=id).first()
+
+    if change_game_form.is_submitted():
+        game.cell_id = change_game_form.cell_id.data
+        game.user_comment = change_game_form.user_comment.data
+        game.personal_comment = change_game_form.my_comment.data
+        db.session.commit()
+        return redirect(url_for('user', id=game.user_id))
+
+    return render_template('edit_game.html', game=game, change_game_form=change_game_form)
+
+
+@app.route('/delete_game/<id>', methods=['GET', 'POST'])
+def delete_game(id):
+    game = Game.query.filter_by(id=id).first()
+    db.session.delete(game)
+    db.session.commit()
+    return redirect(url_for('user', id=game.user_id))
+
 
 @app.route('/delete/user/<id>')
 @login_required

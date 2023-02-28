@@ -21,31 +21,6 @@
         </p>
         
     </div>
-    <div class="edit" id="hide">
-          <form action="", method="POST">
-            <h1>{{change_game_form.cell_id(class='edit_field', value = game.cell.id)}}{{game.cell.title}}</h1>
-            <p>
-                <span>Комментарий человека:</span>
-                <span>{{change_game_form.user_comment(class='edit_field_area', value=game.user_comment)}}</span>
-            </p>
-            <p> 
-                <span>Мой комментарий:</span>
-                <span>{{change_game_form.my_comment(class='edit_field_area', value = game.personal_comment)}}</span>
-            </p>
-            <p>
-                <span>Тип:</span>
-                <span>
-                    {% if game.cell%}
-                    {{game.cell.type.name}}
-                    {% endif %}   
-                </span>
-            </p>
-            <p>
-                {{change_game_form.submit()}}
-                <a href="">delete</a>
-            </p>
-          </form>
-    </div>
     <p>
         <a href="{{url_for('edit_game', id=game.id)}}" class="">Редактировать</a>
     </p>

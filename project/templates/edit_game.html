@@ -1,0 +1,47 @@
+<link rel="stylesheet" href="/static/css/edit_game.css">
+<link rel="stylesheet" href="/static/css/user.css">
+<link rel="stylesheet" href="/static/css/_game.css">
+{% extends 'base.html' %}
+{% block content %}
+<div class="current_user_block">
+    <aside class="user">
+        
+    </aside>
+
+    <aside class="users_cells">
+        <div class="game">
+            <div class="edit" id="">
+                <form action="", method="POST">
+                <h1>{{change_game_form.cell_id(class='edit_field', value = game.cell.id)}}{{game.cell.title}}</h1>
+                <p>
+                    <span>Комментарий человека:</span>
+                    <span>{{change_game_form.user_comment(class='field', value=game.user_comment)}}</span>
+                </p>
+                <p> 
+                    <span>Мой комментарий:</span>
+                    <span>{{change_game_form.my_comment(class='field', value = game.personal_comment)}}</span>
+                </p>
+                <p>
+                    <span>Тип:</span>
+                    <span>
+                        {% if game.cell%}
+                        {{game.cell.type.name}}
+                        {% endif %}   
+                    </span>
+                </p>
+                <p>
+                    {{change_game_form.submit(class='alt_button')}}
+                    <a href="{{ url_for('delete_game', id=game.id)}}" class="link2">delete</a>
+                </p>
+                </form>
+            </div>
+        </div>
+
+    </aside>
+
+    <aside class="add_game">
+        
+    </aside>
+</div>
+
+{% endblock %}
