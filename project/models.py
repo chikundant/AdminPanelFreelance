@@ -73,6 +73,12 @@ class Cell(db.Model):
         return '<Cell {} {}>'.format(self.id, 'Cell')
 
 
+class Template(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250))
+    description = db.Column(db.String(250))
+
+
 @login.user_loader
 def load_user(id):
     return Admin.query.get(int(id))

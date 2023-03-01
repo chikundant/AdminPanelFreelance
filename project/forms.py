@@ -84,3 +84,12 @@ class TypeForm(FlaskForm):
     description = TextAreaField()
 
     submit = SubmitField()
+
+
+class TemplateForm(FlaskForm):
+    id = StringField()
+    name_select = SelectField(choices=[(0, None)])
+    name = StringField()
+    description = TextAreaField()
+
+    submit = SubmitField()

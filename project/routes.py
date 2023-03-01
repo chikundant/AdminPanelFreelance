@@ -2,9 +2,9 @@ from project import app
 from flask import render_template, flash, redirect, url_for, request, render_template_string
 from werkzeug.urls import url_parse
 from project.forms import LoginForm, RegistrationForm, SearchForm, AddUserForm, AddGameForm, ChangeGameForm, CellForm, \
-    TypeForm
+    TypeForm, TemplateForm
 from flask_login import current_user, login_user, logout_user, login_required
-from project.models import Admin, User, Game, Type, Cell
+from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
 import datetime
 
@@ -70,7 +70,7 @@ def change_cell():
     if cell_form.is_submitted() and request.form['submit'] == 'search':
         cell = Cell.query.filter_by(id=cell_form.id.data).first()
         if cell:
-            cell_form.type.default = int(cell.type_id)
+            cell_form.type.default = cell.type_id
             cell_form.process()
             cell_form.description.data = cell.description
             cell_form.id.data = cell.id
@@ -94,18 +94,11 @@ def change_cell():
 @login_required
 def change_type():
     type_form = TypeForm()
-    # type_form.name_select.default = 0
-    # type_form.process()
+
     types = Type.query.all()
     print(type_form.name_select.choices)
     for i in range(len(types)):
         type_form.name_select.choices.append((types[i].id, types[i].name))
-
-
-    # type_form.name_select.choices = [(type.id, type.name) for type in Type.query.all()]
-    # type_form.name_select.choices.append((0, None))
-
-
 
     if type_form.is_submitted() and request.form['submit'] == 'search':
         type = Type.query.filter_by(id=type_form.name_select.data).first()
@@ -126,14 +119,39 @@ def change_type():
         db.session.commit()
         return redirect('change_type')
 
-
     return render_template('change_type.html', type_form=type_form)
 
 
-@app.route('/change_template')
+@app.route('/change_template', methods=['GET', 'POST'])
 @login_required
 def change_template():
-    return render_template('change_template.html')
+    template_form = TemplateForm()
+
+    templates = Template.query.all()
+    print(template_form.name_select.choices)
+    for i in range(len(templates)):
+        template_form.name_select.choices.append((templates[i].id, templates[i].name))
+
+    if template_form.is_submitted() and request.form['submit'] == 'search':
+        template = Template.query.filter_by(id=template_form.name_select.data).first()
+        if template:
+            template_form.name.data = template.name
+            template_form.description.data = template.description
+        else:
+            return redirect('change_template')
+
+    elif template_form.is_submitted() and request.form['submit'] == 'save':
+        print(template_form.name.data)
+        template = Template.query.filter_by(id=template_form.name_select.data).first()
+        if template is None:
+            template = Template()
+        template.name = template_form.name.data
+        template.description = template_form.description.data
+        db.session.add(template)
+        db.session.commit()
+        return redirect('change_template')
+
+    return render_template('change_template.html', type_form=template_form)
 
 
 
