@@ -1,7 +1,8 @@
 from project import app
 from flask import render_template, flash, redirect, url_for, request, render_template_string
 from werkzeug.urls import url_parse
-from project.forms import LoginForm, RegistrationForm, SearchForm, AddUserForm, AddGameForm, ChangeGameForm
+from project.forms import LoginForm, RegistrationForm, SearchForm, AddUserForm, AddGameForm, ChangeGameForm, CellForm, \
+    TypeForm
 from flask_login import current_user, login_user, logout_user, login_required
 from project.models import Admin, User, Game, Type, Cell
 from project import db
@@ -36,7 +37,6 @@ def user(id):
 
     add_user_form = AddUserForm()
     if add_user_form.is_submitted() and not (add_user_form.name.data is None):
-        print("1")
         user.name = add_user_form.name.data
         user.email = add_user_form.email.data
         user.phone = add_user_form.phone.data
@@ -47,7 +47,6 @@ def user(id):
 
     add_game_form = AddGameForm()
     if add_game_form.is_submitted():
-        print("2")
         game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data,
                     user_comment=add_game_form.user_comment.data)
         game.user_id = user.id
@@ -59,6 +58,86 @@ def user(id):
 
     return render_template('user.html', user=user, add_game_form=add_game_form, add_user_form=add_user_form,
                            games=games)
+
+
+@app.route('/change_cell', methods=['GET', 'POST'])
+@login_required
+def change_cell():
+    cell_form = CellForm()
+    cell_form.type.choices = [(type.id, type.name) for type in Type.query.all()]
+    cell_form.type.choices.append((0, None))
+
+    if cell_form.is_submitted() and request.form['submit'] == 'search':
+        cell = Cell.query.filter_by(id=cell_form.id.data).first()
+        if cell:
+            cell_form.type.default = int(cell.type_id)
+            cell_form.process()
+            cell_form.description.data = cell.description
+            cell_form.id.data = cell.id
+            cell_form.title.data = cell.title
+
+    elif cell_form.is_submitted() and request.form['submit'] == 'save':
+        cell = Cell.query.filter_by(id=cell_form.id.data).first()
+        if cell is None:
+            cell = Cell()
+        cell.id = cell_form.id.data
+        cell.title = cell_form.title.data
+        cell.description = cell_form.description.data
+        cell.type_id = cell_form.type.data
+        db.session.add(cell)
+        db.session.commit()
+        return redirect('change_cell')
+    return render_template('change_cell.html', cell_form=cell_form)
+
+
+@app.route('/change_type', methods=['GET', 'POST'])
+@login_required
+def change_type():
+    type_form = TypeForm()
+    # type_form.name_select.default = 0
+    # type_form.process()
+    types = Type.query.all()
+    print(type_form.name_select.choices)
+    for i in range(len(types)):
+        type_form.name_select.choices.append((types[i].id, types[i].name))
+
+
+    # type_form.name_select.choices = [(type.id, type.name) for type in Type.query.all()]
+    # type_form.name_select.choices.append((0, None))
+
+
+
+    if type_form.is_submitted() and request.form['submit'] == 'search':
+        type = Type.query.filter_by(id=type_form.name_select.data).first()
+        if type:
+            type_form.name.data = type.name
+            type_form.description.data = type.description
+        else:
+            return redirect('change_type')
+
+    elif type_form.is_submitted() and request.form['submit'] == 'save':
+        print(type_form.name.data)
+        type = Type.query.filter_by(id=type_form.name_select.data).first()
+        if type is None:
+            type = Type()
+        type.name = type_form.name.data
+        type.description = type_form.description.data
+        db.session.add(type)
+        db.session.commit()
+        return redirect('change_type')
+
+
+    return render_template('change_type.html', type_form=type_form)
+
+
+@app.route('/change_template')
+@login_required
+def change_template():
+    return render_template('change_template.html')
+
+
+
+
 
 
 @app.route('/game/<id>', methods=['GET', 'POST'])

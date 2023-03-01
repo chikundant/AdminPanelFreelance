@@ -1,0 +1,103 @@
+.change_block{
+    margin: 50px auto;
+    width: 50%;
+    height: 70vh;
+    background-color: rgb(92, 0, 167);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.menu ul{
+    list-style: none;
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.button{
+    display: block;
+    padding: 10px 25px 10px 25px;
+
+    margin-right: 25px;
+
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(128, 128, 128, 0);
+
+    border-radius: 10px;
+
+    color: rgb(92, 0, 167);
+}
+
+.button:hover{
+    cursor: pointer;
+    background-color: rgb(245, 245, 245);
+}
+
+.button:active{
+    background-color: rgb(225, 225, 225);
+}
+
+h1{
+    text-align: center;
+    margin: 25px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: 80%;
+}
+
+.change_block_header{
+    width: 100%;    
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.field{
+    height: 30px;
+    border: 1px solid rgba(128, 128, 128, 0.382);
+    border-radius: 7px;    
+
+    padding-left: 10px;
+    
+}
+
+
+.description{   
+    height: 100%;
+    width: 100%;
+    margin-top: 25px;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.change_type_block_header{
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.header_type{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.name{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.name textarea{
+    height: 200px;
+}

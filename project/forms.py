@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, SelectField, SearchField, \
     DateField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, Optional
-from project.models import Admin, User
+from project.models import Admin, User, Type
 
 
 class LoginForm(FlaskForm):
@@ -66,3 +66,21 @@ class ChangeGameForm(FlaskForm):
     my_comment = StringField()
 
     submit = SubmitField('Сохранить')
+
+
+class CellForm(FlaskForm):
+    id = StringField(validators=[DataRequired()])
+    title = StringField()
+    description = TextAreaField()
+    type = SelectField()
+
+    submit = SubmitField()
+
+
+class TypeForm(FlaskForm):
+    id = StringField()
+    name_select = SelectField(choices=[(0, None)])
+    name = StringField()
+    description = TextAreaField()
+
+    submit = SubmitField()

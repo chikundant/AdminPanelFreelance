@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="/static/css/change.css">
+{% extends 'base.html' %}
+{% block content %}
+    <div class="change_block">
+        {% include  '_change_menu.html'%}
+        <h1>Клетка</h1>
+       <form action="", method="post">
+            <div class="change_block_header">
+                <div>
+                    {{cell_form.id.label}}
+                    {{cell_form.id(class='field')}}
+                </div>
+
+                
+                <div>
+                    {{cell_form.title.label}}
+                    {{cell_form.title(class='field')}}
+                </div>
+
+                <div>
+                    {{cell_form.type.label}}
+                    {{cell_form.type(class='field')}}
+                </div>
+                
+
+                {{cell_form.submit(value='search', class='button')}}
+                
+            </div>
+
+            {{cell_form.description(class='description')}}
+
+            {{cell_form.submit(value='save', class='button')}}
+       </form>
+    </div>
+{% endblock %}

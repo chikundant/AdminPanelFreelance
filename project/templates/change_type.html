@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="/static/css/change.css">
+{% extends 'base.html' %}
+{% block content %}
+    <div class="change_block">
+        {% include  '_change_menu.html'%}
+        <h1>Тип</h1>
+       <form action="", method="post">
+            <div class="change_type_block_header">
+                <div class="header_type">
+                    <p>
+                        {{type_form.name_select.label}}
+                        {{type_form.name_select(class='field')}}
+                    </p>
+                    {{type_form.submit(value='search', class='button')}}
+                </div>
+
+                <div class="name">
+                    {{type_form.name.label}}
+                    {{type_form.name(class='field')}}
+                </div>
+
+                <div class="name">
+                    {{type_form.description.label}}
+                    {{type_form.description(class='field')}}
+                </div>
+                
+            </div>
+
+            {{type_form.submit(value='save', class='button')}}
+       </form>
+    </div>
+{% endblock %}

@@ -4,16 +4,16 @@
     <div class="info" id = 'show'>
             <h1>{{game.cell.id}} {{game.cell.title}}</h1>
         <p>
-            <span>Комментарий человека:</span>
-            <span>{{game.user_comment}}</span>
+            <span class="t">Комментарий человека:</span>
+            <span class="dec">{{game.user_comment}}</span>
         </p>
         <p>
-            <span>Мой комментарий:</span>
-            <span>{{game.personal_comment}}</span>
+            <span class="t">Мой комментарий:</span>
+            <span class="dec">{{game.personal_comment}}</span>
         </p>
         <p>
-            <span>Тип:</span>
-            <span>
+            <span class="t">Тип:</span>
+            <span class="dec">
                 {% if game.cell%}
                 {{game.cell.type.name}}
                 {% endif %}   
