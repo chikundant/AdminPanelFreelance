@@ -93,3 +93,7 @@ class TemplateForm(FlaskForm):
     description = TextAreaField()
 
     submit = SubmitField()
+
+
+class ReportForm(FlaskForm):
+    text = TextAreaField('editordata')

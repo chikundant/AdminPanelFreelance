@@ -3,9 +3,12 @@
     width: 50%;
     height: 70vh;
     background-color: rgb(92, 0, 167);
-    color: white;
+    /* color: white; */
     padding: 25px;
     border-radius: 15px;
+}
+.change_block label{
+    color:white;
 }
 
 .menu ul{
@@ -49,7 +52,7 @@ form{
     align-items: center;
 
     height: 80%;
-}
+} 
 
 .change_block_header{
     width: 100%;    
@@ -68,13 +71,6 @@ form{
 }
 
 
-.description{   
-    height: 100%;
-    width: 100%;
-    margin-top: 25px;
-    padding: 10px;
-    border-radius: 15px;
-}
 
 .change_type_block_header{
     display: flex;
@@ -96,8 +92,17 @@ form{
     flex-direction: column;
     width: 100%;
     margin-bottom: 25px;
-}
+} 
 
 .name textarea{
     height: 200px;
+}
+
+
+
+.note-editor{   
+    width: 100%;
+    margin-top: 25px;
+
+    border-radius: 15px;
 }

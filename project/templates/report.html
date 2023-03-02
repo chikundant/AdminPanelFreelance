@@ -11,15 +11,29 @@
 {% block content %}
     <div class="report_wrapper">
         <div class="report_block">
-            <h1>Your content</h1>
             <form method="post">
-                <textarea id="summernote" name="editordata"></textarea>
+                {{form.text(id="summernote")}}
+                <!-- <textarea id="summernote" name="editordata"></textarea> -->
                 <input type="submit" value="Save">
             </form>
             <script>
                 $(document).ready(function() {
                     $('#summernote').summernote(
-                        {}
+                        {
+                            height: 300,
+                            toolbar: [
+                                        ['style', ['style']],
+                                        ['font', ['bold', 'underline', 'clear', 'italic']],
+                                        ['fontname', ['fontname']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        ['table', ['table']],
+                                        ['insert', ['link', 'picture', 'video']],
+                                        ['view', ['fullscreen', 'codeview', 'help']]
+                                    ]
+                            
+                        }
+                        
                     );
                 });
             </script>

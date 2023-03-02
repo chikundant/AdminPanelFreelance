@@ -1,9 +1,9 @@
 import config
 from project import app
-from flask import render_template, flash, redirect, url_for, request, render_template_string
+from flask import render_template, flash, redirect, url_for, request, render_template_string, send_file
 from werkzeug.urls import url_parse
 from project.forms import LoginForm, RegistrationForm, SearchForm, AddUserForm, AddGameForm, ChangeGameForm, CellForm, \
-    TypeForm, TemplateForm
+    TypeForm, TemplateForm, ReportForm
 from flask_login import current_user, login_user, logout_user, login_required
 from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
@@ -240,11 +240,20 @@ def logout():
 @app.route('/user/<id>/report', methods=['GET', 'POST'])
 @login_required
 def report(id):
+    user = User.query.filter_by(id=id).first()
+    games = Game.query.filter_by(user_id=id).all()
+
+    form = ReportForm()
+
     if request.method == 'POST':
-        print(request.form.get('editordata'))
+        pdf = weasyprint.HTML(string=form.text.data).write_pdf()
+        open('project/report.pdf', 'wb').write(pdf)
+        return send_file('report.pdf', as_attachment=True)
 
-        pdf = weasyprint.HTML(string=request.form.get('editordata')).write_pdf()
-        open('report.pdf', 'wb').write(pdf)
-        print('saved')
+    form.text.data = '<h1>' + user.name + '</h1>'
+    for game in games:
+        form.text.data += game.cell.title
+        form.text.data += game.cell.description
 
-    return render_template('report.html')
+    return render_template('report.html', user=user, form=form)
+
