@@ -1,3 +1,4 @@
+import config
 from project import app
 from flask import render_template, flash, redirect, url_for, request, render_template_string
 from werkzeug.urls import url_parse
@@ -7,6 +8,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
 import datetime
+
+import weasyprint
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -154,10 +157,6 @@ def change_template():
     return render_template('change_template.html', type_form=template_form)
 
 
-
-
-
-
 @app.route('/game/<id>', methods=['GET', 'POST'])
 def edit_game(id):
     change_game_form = ChangeGameForm()
@@ -236,3 +235,16 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/user/<id>/report', methods=['GET', 'POST'])
+@login_required
+def report(id):
+    if request.method == 'POST':
+        print(request.form.get('editordata'))
+
+        pdf = weasyprint.HTML(string=request.form.get('editordata')).write_pdf()
+        open('report.pdf', 'wb').write(pdf)
+        print('saved')
+
+    return render_template('report.html')
