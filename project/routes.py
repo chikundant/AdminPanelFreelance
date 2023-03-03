@@ -9,7 +9,8 @@ from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
 import datetime
 
-import weasyprint
+from pyhtml2pdf import converter
+import os
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -266,9 +267,12 @@ def report(id):
     form = ReportForm()
 
     if request.method == 'POST':
-        pdf = weasyprint.HTML(string=form.text.data).write_pdf()
-        open('project/report.pdf', 'wb').write(pdf)
+        with open("html_doc.html", "w", encoding="utf-8") as file:
+            file.write(form.text.data)
+        path = os.path.abspath('html_doc.html')
+        converter.convert(source=f'file:///{path}', target='project/report.pdf')
         return send_file('report.pdf', as_attachment=True)
+
 
     # Creating a template
     form.text.data = h1(user.name) + h1(user.date)
