@@ -26,7 +26,7 @@ class RegistrationForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    type = SelectField('Filter', choices=[(1, 'username'), (2, 'email')])
+    type = SelectField('Filter', choices=[(1, 'username'), (2, 'email'), (3, 'phone')])
     input = SearchField()
 
     submit = SubmitField('Find')

@@ -30,6 +30,21 @@ def index():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('index'))
 
+    if search_form.is_submitted():
+        search = '%{}%'
+        if search_form.input.data == '':
+            users = User.query.all()
+
+        if search_form.type.data == '1':
+            users = User.query.filter(User.name.like(search.format(search_form.input.data))).all()
+
+        elif search_form.type.data == '2':
+            users = User.query.filter(User.email.like(search.format(search_form.input.data))).all()
+
+        elif search_form.type.data == '3':
+            users = User.query.filter(User.phone.like(search.format(search_form.input.data))).all()
+
+
     return render_template('index.html', search_form=search_form, add_form=add_form, users=users)
 
 
@@ -243,6 +258,11 @@ def report(id):
     user = User.query.filter_by(id=id).first()
     games = Game.query.filter_by(user_id=id).all()
 
+    newline = '</br>'
+    bold = lambda str: f'<strong>{str}</strong>'
+    i = lambda str: f'<i>{str}</i>'
+    h1 = lambda str: f'<h1>{str}</h1>'
+
     form = ReportForm()
 
     if request.method == 'POST':
@@ -250,10 +270,30 @@ def report(id):
         open('project/report.pdf', 'wb').write(pdf)
         return send_file('report.pdf', as_attachment=True)
 
-    form.text.data = '<h1>' + user.name + '</h1>'
+    # Creating a template
+    form.text.data = h1(user.name) + h1(user.date)
+    form.text.data += 'Запрос: ' + newline + i('Здесь вписывается ваш запрос') + newline + newline
+
     for game in games:
         form.text.data += game.cell.title
         form.text.data += game.cell.description
+        if game.cell.type:
+            form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
+            form.text.data += i(game.cell.type.description) + newline + newline
+
+        form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
+        form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+
+
+
+
+
+
+
+
+
+
+
 
     return render_template('report.html', user=user, form=form)
 
