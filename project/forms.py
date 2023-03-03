@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, SelectField, SearchField, \
     DateField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, Optional
-from project.models import Admin, User, Type
+from project.models import Admin, User, Type, Cell
 
 
 class LoginForm(FlaskForm):
@@ -58,6 +58,11 @@ class AddGameForm(FlaskForm):
     my_comment = TextAreaField('Мой комментарий')
 
     submit = SubmitField('Создать')
+
+    def validate_cell_id(self, cell_id):
+        cell = Cell.query.filter_by(id=cell_id.data).first()
+        if cell is None:
+            raise ValidationError('Current phone already exists')
 
 
 class ChangeGameForm(FlaskForm):

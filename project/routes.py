@@ -9,9 +9,21 @@ from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
 import datetime
 
-from pyhtml2pdf import converter
-import os
+# from pyhtml2pdf import converter
+# import os
+# import pdfkit
+# import html2text
+# from xhtml2pdf import pisa
+#
+#
+# from fpdf import FPDF
 
+
+from docx import Document
+from htmldocx import HtmlToDocx
+
+# import docx2pdf
+# import pypandoc
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -66,11 +78,13 @@ def user(id):
 
     add_game_form = AddGameForm()
     if add_game_form.is_submitted():
-        game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data,
-                    user_comment=add_game_form.user_comment.data)
-        game.user_id = user.id
-        db.session.add(game)
-        db.session.commit()
+        cell = Cell.query.filter_by(id=add_game_form.cell_id.data).first()
+        if cell is not None:
+            game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data,
+                        user_comment=add_game_form.user_comment.data)
+            game.user_id = user.id
+            db.session.add(game)
+            db.session.commit()
         return redirect(url_for('user', id=id))
 
     games = Game.query.filter_by(user_id=user.id).all()
@@ -259,45 +273,77 @@ def report(id):
     user = User.query.filter_by(id=id).first()
     games = Game.query.filter_by(user_id=id).all()
 
-    newline = '</br>'
-    bold = lambda str: f'<strong>{str}</strong>'
-    i = lambda str: f'<i>{str}</i>'
-    h1 = lambda str: f'<h1>{str}</h1>'
+
 
     form = ReportForm()
 
     if request.method == 'POST':
-        with open("html_doc.html", "w", encoding="utf-8") as file:
-            file.write(form.text.data)
-        path = os.path.abspath('html_doc.html')
-        converter.convert(source=f'file:///{path}', target='project/report.pdf')
-        return send_file('report.pdf', as_attachment=True)
+        # with open("html_doc.html", "w", encoding="utf-8") as file:
+        #     file.write(form.text.data)
+        # path = os.path.abspath('html_doc.html')
+        # converter.convert(source=f'file:///{path}', target='project/report.pdf')
+
+        # convert_html_to_pdf(form.text.data, 'project/report.pdf')
+        # pdf = pdfkit.from_string(form.text.data, 'project/report.pdf', verbose=True)
+
+
+        document = Document()
+        new_parser = HtmlToDocx()
+        html = (str(form.text.data))
+
+        new_parser.add_html_to_document(html, document)
+        document.save('project/report.docx')
+        return send_file('report.docx', as_attachment=True)
+
+        # docx2pdf.convert("converted.docx", "converted.pdf")
+
+        # convert("converted.docx", "output.pdf")
+        # convert("my_docx_folder/")
+
 
 
     # Creating a template
-    form.text.data = h1(user.name) + h1(user.date)
-    form.text.data += 'Запрос: ' + newline + i('Здесь вписывается ваш запрос') + newline + newline
+    newline = '</br>'
+    bold = lambda str: f'<b>{str}</b>'
+    i = lambda str: f'<i>{str}</i>'
+    h1 = lambda str: f'<h1>{str}</h1>'
+    h2 = lambda str: f'<h2>{str}</h2>'
+    p = lambda str: f'<p>{str}</p>'
+    d = str(user.date)
+
+    form.text.data = p(h1(user.name + ' ' + d))
+    form.text.data += newline
+    form.text.data += p(bold('Запрос: ')) + p(i('Здесь вписывается ваш запрос'))
+
+    form.text.data += p('_________________________________________________________________________________') + p(
+        newline)
 
     for game in games:
-        form.text.data += game.cell.title
-        form.text.data += game.cell.description
-        if game.cell.type:
-            form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
-            form.text.data += i(game.cell.type.description) + newline + newline
+        if game.cell:
+            form.text.data += h2(game.cell.title) + newline
+            form.text.data += game.cell.description
+            if game.cell.type:
+                form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
+                form.text.data += i(game.cell.type.description) + newline + newline
+            if game.user_comment:
+                form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
+            if game.personal_comment:
+                form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
 
-        form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
-        form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+            form.text.data += p('_________________________________________________________________________________') + newline
 
-
-
-
-
-
-
-
-
-
-
+    form.text.data += p(bold('ФИНАЛЬНЫЙ КОММЕНТАРИЙ: ')) + p(i('Здесь вписывается финальный комментарий'))
 
     return render_template('report.html', user=user, form=form)
 
+
+# def convert_html_to_pdf(source_html, output_filename):
+#
+#     result_file = open(output_filename, "wb")
+#
+#     pisa_status = pisa.CreatePDF(
+#             source_html,
+#             dest=result_file
+#             )
+#     result_file.close()
+#     return pisa_status.err

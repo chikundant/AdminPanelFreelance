@@ -19,12 +19,16 @@
                 <td>{{user.birthday}}</td>
                 <td class="buttons">
                     <a href="{{ url_for('user', id=user.id) }}" class="button">Юзер</a>
-                    <a href="{{ url_for('delete', id=user.id) }}" class="button">Удалить</a>
+                    
                 </td>
             </tr>
             <tr>
                 <td colspan="5" class="comment">{{user.additional_comment}}</td>
+                
             </tr>
+            
         </tbody>
+        
     </table>
+    <a href="{{ url_for('delete', id=user.id) }}" class="delete_button">Удалить</a>
 </div>
