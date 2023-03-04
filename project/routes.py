@@ -8,22 +8,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 from project.models import Admin, User, Game, Type, Cell, Template
 from project import db
 import datetime
-
-# from pyhtml2pdf import converter
-# import os
-# import pdfkit
-# import html2text
-# from xhtml2pdf import pisa
-#
-#
-# from fpdf import FPDF
-
+from collections import Counter
 
 from docx import Document
 from htmldocx import HtmlToDocx
-
-# import docx2pdf
-# import pypandoc
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -32,12 +20,12 @@ def index():
     search_form = SearchForm()
     add_form = AddUserForm()
 
-    users = User.query.all()
+    users = User.query.order_by(User.id.desc()).all()
 
     if add_form.validate_on_submit():
         user = User(name=add_form.name.data, email=add_form.email.data or None, phone=add_form.phone.data or None,
                     additional_comment=add_form.comment.data, date=datetime.date.today(),
-                    birthday=add_form.birthday.data or None)
+                    birthday=add_form.birthday.data or None, city=add_form.city.data)
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
@@ -72,7 +60,9 @@ def user(id):
         user.email = add_user_form.email.data
         user.phone = add_user_form.phone.data
         user.birthday = add_user_form.birthday.data
+        user.city = add_user_form.city.data
         user.additional_comment = add_user_form.comment.data
+
         db.session.commit()
         return redirect(url_for('user', id=id))
 
@@ -87,7 +77,7 @@ def user(id):
             db.session.commit()
         return redirect(url_for('user', id=id))
 
-    games = Game.query.filter_by(user_id=user.id).all()
+    games = Game.query.filter_by(user_id=user.id).order_by(Game.id.desc()).all()
 
     return render_template('user.html', user=user, add_game_form=add_game_form, add_user_form=add_user_form,
                            games=games)
@@ -273,20 +263,8 @@ def report(id):
     user = User.query.filter_by(id=id).first()
     games = Game.query.filter_by(user_id=id).all()
 
-
-
     form = ReportForm()
-
     if request.method == 'POST':
-        # with open("html_doc.html", "w", encoding="utf-8") as file:
-        #     file.write(form.text.data)
-        # path = os.path.abspath('html_doc.html')
-        # converter.convert(source=f'file:///{path}', target='project/report.pdf')
-
-        # convert_html_to_pdf(form.text.data, 'project/report.pdf')
-        # pdf = pdfkit.from_string(form.text.data, 'project/report.pdf', verbose=True)
-
-
         document = Document()
         new_parser = HtmlToDocx()
         html = (str(form.text.data))
@@ -294,12 +272,6 @@ def report(id):
         new_parser.add_html_to_document(html, document)
         document.save('project/report.docx')
         return send_file('report.docx', as_attachment=True)
-
-        # docx2pdf.convert("converted.docx", "converted.pdf")
-
-        # convert("converted.docx", "output.pdf")
-        # convert("my_docx_folder/")
-
 
 
     # Creating a template
@@ -313,37 +285,147 @@ def report(id):
 
     form.text.data = p(h1(user.name + ' ' + d))
     form.text.data += newline
-    form.text.data += p(bold('Запрос: ')) + p(i('Здесь вписывается ваш запрос'))
+    form.text.data += p(bold('Запрос: ')) + p(i(user.additional_comment))
 
     form.text.data += p('_________________________________________________________________________________') + p(
         newline)
 
+    printed_games = []
+
     for game in games:
         if game.cell:
-            form.text.data += h2(game.cell.title) + newline
-            form.text.data += game.cell.description
-            if game.cell.type:
-                form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
-                form.text.data += i(game.cell.type.description) + newline + newline
-            if game.user_comment:
-                form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
-            if game.personal_comment:
-                form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+            if game.cell.title in printed_games:
+                form.text.data += h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) + ' ' + game.cell.title) + newline
+                if game.user_comment:
+                    form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
+                if game.personal_comment:
+                    form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
 
-            form.text.data += p('_________________________________________________________________________________') + newline
+                form.text.data += p('_________________________________________________________________________________') + newline
+            else:
+
+                form.text.data += h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) +  ' ' + game.cell.title) + newline
+                form.text.data += game.cell.description
+                # if game.cell.type:
+                #     form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
+                #     form.text.data += i(game.cell.type.description) + newline + newline
+                if game.user_comment:
+                    form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
+                if game.personal_comment:
+                    form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+
+                form.text.data += p('_________________________________________________________________________________') + newline
+
+            printed_games.append(game.cell.title)
+    form.text.data += newline
+
+
+    cells = []
+    for game in games:
+        cells.append(game.cell)
+
+    printed_games = dict(Counter(cells))
+    # for game, value in printed_games.items():
+    #     form.text.data += Template.query.filter_by(name='emoji_cell_title').first().description + bold(game) + ' '
+    #     form.text.data += '(' + str(value) + ')'
+    #     form.text.data += newline
+
+
+    # Финалочка
+    form.text.data += p(Template.query.filter_by(name='snake').first().description)
+    snake = {
+        12: 'Зависть - Неудовлетворенность',
+        16: 'Ревность - Хотение',
+        24: 'Плохая Компания - Тщеславие',
+        52: 'Насилие - Чистилище',
+        63: 'Инерция - Обнуление',
+        55: 'Эгоизм - Гнев',
+        61: 'Неверно направленное сознание - Ничтожност',
+        29: 'Отрицание своей природы - Заблуждение',
+        44: 'Неведение - Чувственный план',
+        72: 'Энергия инерции - Земля'
+    }
+
+    for cell in printed_games:
+        if cell.id in snake.keys():
+            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(snake[cell.id])
+            if printed_games[cell] > 1:
+                form.text.data += bold(f' ({printed_games[cell]} р.)')
+            form.text.data += newline
+
+    form.text.data += p('_________________________________________________________________________________') + newline
+
+
+    form.text.data += p(Template.query.filter_by(name='arrow').first().description)
+    arrow = {
+        10: 'Очищение - Уверенность',
+        17: 'Сопереживание - Созидание',
+        20: 'Отдавание - Равновесие',
+        22: 'Жизнь в согласии с природой - Верно направленное сознание',
+        27: 'Высшая Цель - Реализация',
+        28: 'Принятие и раскрытие своей природы - Преодоление',
+        45: 'Правильное знание - Оставление концепций и отождествлений',
+        46: 'Различение - Счастье',
+        37: 'Мудрость - План блаженства',
+        54: 'Выражение Бога через себя - Высшее сознание'
+    }
+    for cell in printed_games:
+        if cell.id in arrow.keys():
+            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(arrow[cell.id])
+            if printed_games[cell] > 1:
+                form.text.data += bold(f' ({printed_games[cell]} р.)')
+            form.text.data += newline
+
+    form.text.data += p('_________________________________________________________________________________') + newline
+
+
+    form.text.data += p(Template.query.filter_by(name='condition').first().description)
+    condition = {
+        1: 'Рождение',
+        3: 'Гнев',
+        5: 'Род',
+        11: 'Развлечение',
+        14: 'Астральный план, связь',
+        15: 'План фантазии',
+        18: 'План радости',
+        19: 'План кармы, действия',
+        21: 'Искуплнение, исправление',
+        23: 'Уверенность',
+        25: 'Хорошая компания',
+        26: 'Печаль',
+        30: 'Хорошие тенденции',
+        31: 'Встреча с учителем',
+        33: 'План ароматов',
+        34: 'План вкуса',
+        36: 'Ясность осознания',
+        38: 'Энергия',
+        39: 'Отпускание',
+        40: 'Восстановления энергетической целостности',
+        42: 'Огонь',
+        43: 'Рождение человека',
+        47: 'План нейтральности',
+        48: 'Солнечный план',
+        49: 'Лунный план',
+        53: 'Вода',
+        56: 'Звук',
+        57: 'Воздух',
+        58: 'Расширение сознания',
+        59: 'Реальность',
+        64: 'Феноменальный план',
+        65: 'План внутреннего пространства',
+
+    }
+
+    for cell in printed_games:
+        if cell.id in condition.keys():
+            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(condition[cell.id])
+            if printed_games[cell] > 1:
+                form.text.data += bold(f' ({printed_games[cell]} р.)')
+            form.text.data += newline
+
+    form.text.data += p('_________________________________________________________________________________') + newline
+
 
     form.text.data += p(bold('ФИНАЛЬНЫЙ КОММЕНТАРИЙ: ')) + p(i('Здесь вписывается финальный комментарий'))
 
     return render_template('report.html', user=user, form=form)
-
-
-# def convert_html_to_pdf(source_html, output_filename):
-#
-#     result_file = open(output_filename, "wb")
-#
-#     pisa_status = pisa.CreatePDF(
-#             source_html,
-#             dest=result_file
-#             )
-#     result_file.close()
-#     return pisa_status.err

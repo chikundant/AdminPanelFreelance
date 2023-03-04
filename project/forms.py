@@ -34,10 +34,11 @@ class SearchForm(FlaskForm):
 
 class AddUserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
-    email = EmailField('Email', validators=[Optional()])
+    email = StringField('Email', validators=[Optional()])
     phone = StringField('Phone', validators=[Optional()])
     birthday = DateField('Birthday', validators=[Optional()])
-    comment = StringField('Comment')
+    comment = StringField('Запрос')
+    city = StringField('City')
 
     submit = SubmitField('Save')
 

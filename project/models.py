@@ -22,11 +22,12 @@ class Admin(UserMixin, db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    email = db.Column(db.String(64), unique=True)
-    phone = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(64))
+    phone = db.Column(db.String(64))
     date = db.Column(db.Date)
     birthday = db.Column(db.Date)
     additional_comment = db.Column(db.String(64))
+    city = db.Column(db.String(64))
 
     game = db.relationship('Game', backref='Game.user_id', cascade="all, delete")
 

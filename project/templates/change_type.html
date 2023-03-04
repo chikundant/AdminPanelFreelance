@@ -1,32 +1,55 @@
 <link rel="stylesheet" href="/static/css/change.css">
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+
+
 {% extends 'base.html' %}
 {% block content %}
-    <div class="change_block">
-        {% include  '_change_menu.html'%}
-        <h1>Тип</h1>
-       <form action="", method="post">
-            <div class="change_type_block_header">
-                <div class="header_type">
-                    <p>
-                        {{type_form.name_select.label}}
-                        {{type_form.name_select(class='field')}}
-                    </p>
-                    {{type_form.submit(value='search', class='button')}}
-                </div>
+<div class="change_block">
+    {% include '_change_menu.html'%}
+    <h1>Тип</h1>
+    <form action="" , method="post">
 
-                <div class="name">
-                    {{type_form.name.label}}
-                    {{type_form.name(class='field')}}
-                </div>
+        <div class="header_type">
+            <p>
+                {{type_form.name_select.label}}
+                {{type_form.name_select(class='field')}}
+            </p>
+            {{type_form.submit(value='search', class='button')}}
+        </div>
 
-                <div class="name">
-                    {{type_form.description.label}}
-                    {{type_form.description(class='field')}}
-                </div>
-                
-            </div>
+        {{type_form.name.label}}
+        {{type_form.name(class='field')}}
+        {{type_form.description(class='description', id='summernote')}}
+        <script>
+            $(document).ready(function() {
+                $('#summernote').summernote(
+                    {
+                        lang: 'ru-RU',
+                        height: 300,
+                        toolbar: [
+                            ['style', ['bold', 'italic', 'clear']],
+                            ['font', ['superscript', 'subscript']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['height', ['height']]
+                        ]
+                        
+                    }
+                    
+                );
+            });
+        </script>
 
-            {{type_form.submit(value='save', class='button')}}
-       </form>
-    </div>
+
+        {{type_form.submit(value='save', class='button')}}
+    </form>
+</div>
 {% endblock %}

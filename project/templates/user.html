@@ -29,6 +29,10 @@
                     <p>{{ user.birthday }}</p>
                 </div>
                 <div class="part">
+                    <h1>Город:</h1>
+                    <p>{{ user.city }}</p>
+                </div>
+                <div class="part">
                     <h1>Комментарий:</h1>
                     <p>{{ user.additional_comment }}</p>
                 </div>
@@ -55,6 +59,10 @@
             <div class="part">
                 {{add_user_form.birthday.label}}
                 {{add_user_form.birthday(value=user.birthday, class='field')}}
+            </div>
+            <div class="part">
+                {{add_user_form.city.label}}
+                {{add_user_form.city(value=user.city, class='field')}}
             </div>
             <div class="part">
                 {{add_user_form.comment.label}}
