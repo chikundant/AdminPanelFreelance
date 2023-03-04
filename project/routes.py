@@ -284,12 +284,16 @@ def report(id):
     p = lambda str: f'<p>{str}</p>'
     d = str(user.date.strftime("%m.%d.%Y"))
 
+    dbir = ''
+    if user.birthday:
+        dbir = str(user.birthday.strftime("%m.%d.%Y"))
+
     form.text.data = p(h1(user.name + ' ' + d))
     form.text.data += newline
     form.text.data += p(bold('Запрос: ')) + p(i(user.additional_comment)) + newline
 
     form.text.data += p(bold('Город: ') + user.city)
-    form.text.data += p(bold('Дата рождения: ') + str(user.birthday.strftime("%m.%d.%Y")) + newline)
+    form.text.data += p(bold('Дата рождения: ') + dbir + newline)
 
     form.text.data += p('_____________________________________________________________')
 
