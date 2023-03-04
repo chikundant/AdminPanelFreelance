@@ -151,7 +151,6 @@ def change_template():
     template_form = TemplateForm()
 
     templates = Template.query.all()
-    print(template_form.name_select.choices)
     for i in range(len(templates)):
         template_form.name_select.choices.append((templates[i].id, templates[i].name))
 
@@ -164,11 +163,12 @@ def change_template():
             return redirect('change_template')
 
     elif template_form.is_submitted() and request.form['submit'] == 'save':
-        print(template_form.name.data)
+
         template = Template.query.filter_by(id=template_form.name_select.data).first()
         if template is None:
             template = Template()
-        template.name = template_form.name.data
+        # template.name = template_form.name.data
+        # template.name = template_form.name_select.data
         template.description = template_form.description.data
         db.session.add(template)
         db.session.commit()
@@ -271,7 +271,8 @@ def report(id):
 
         new_parser.add_html_to_document(html, document)
         document.save('project/report.docx')
-        return send_file('report.docx', as_attachment=True)
+        file = '{}-{}.docx'.format(user.name, user.date)
+        return send_file('report.docx', as_attachment=True, download_name=file)
 
 
     # Creating a template
@@ -281,40 +282,38 @@ def report(id):
     h1 = lambda str: f'<h1>{str}</h1>'
     h2 = lambda str: f'<h2>{str}</h2>'
     p = lambda str: f'<p>{str}</p>'
-    d = str(user.date)
+    d = str(user.date.strftime("%m.%d.%Y"))
 
     form.text.data = p(h1(user.name + ' ' + d))
     form.text.data += newline
-    form.text.data += p(bold('Запрос: ')) + p(i(user.additional_comment))
+    form.text.data += p(bold('Запрос: ')) + p(i(user.additional_comment)) + newline
 
-    form.text.data += p('_________________________________________________________________________________') + p(
-        newline)
+    form.text.data += p(bold('Город: ') + user.city)
+    form.text.data += p(bold('Дата рождения: ') + str(user.birthday.strftime("%m.%d.%Y")) + newline)
+
+    form.text.data += p('_____________________________________________________________')
 
     printed_games = []
 
     for game in games:
         if game.cell:
             if game.cell.title in printed_games:
-                form.text.data += h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) + ' ' + game.cell.title) + newline
+                form.text.data += p(h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) + ' ' + game.cell.title) + newline)
                 if game.user_comment:
-                    form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
-                if game.personal_comment:
-                    form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+                    form.text.data += p(bold('Твой комментарий: ') + p(game.user_comment + newline + newline))
 
-                form.text.data += p('_________________________________________________________________________________') + newline
+                form.text.data += p('_____________________________________________________________')
             else:
 
-                form.text.data += h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) +  ' ' + game.cell.title) + newline
-                form.text.data += game.cell.description
-                # if game.cell.type:
-                #     form.text.data += bold('Тип клетки: ') + game.cell.type.name + newline
-                #     form.text.data += i(game.cell.type.description) + newline + newline
+                form.text.data += p(h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) +  ' ' + game.cell.title) + newline)
                 if game.user_comment:
-                    form.text.data += bold('Ваш комментарий: ') + newline + game.user_comment + newline + newline
-                if game.personal_comment:
-                    form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+                    form.text.data += p(bold('Твой комментарий: ')) + p(game.user_comment + newline + newline)
+                form.text.data += game.cell.description
 
-                form.text.data += p('_________________________________________________________________________________') + newline
+                # if game.personal_comment:
+                #     form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
+
+                form.text.data += p('_____________________________________________________________')
 
             printed_games.append(game.cell.title)
     form.text.data += newline
@@ -325,11 +324,6 @@ def report(id):
         cells.append(game.cell)
 
     printed_games = dict(Counter(cells))
-    # for game, value in printed_games.items():
-    #     form.text.data += Template.query.filter_by(name='emoji_cell_title').first().description + bold(game) + ' '
-    #     form.text.data += '(' + str(value) + ')'
-    #     form.text.data += newline
-
 
     # Финалочка
     form.text.data += p(Template.query.filter_by(name='snake').first().description)
@@ -345,18 +339,6 @@ def report(id):
         44: 'Неведение - Чувственный план',
         72: 'Энергия инерции - Земля'
     }
-
-    for cell in printed_games:
-        if cell.id in snake.keys():
-            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(snake[cell.id])
-            if printed_games[cell] > 1:
-                form.text.data += bold(f' ({printed_games[cell]} р.)')
-            form.text.data += newline
-
-    form.text.data += p('_________________________________________________________________________________') + newline
-
-
-    form.text.data += p(Template.query.filter_by(name='arrow').first().description)
     arrow = {
         10: 'Очищение - Уверенность',
         17: 'Сопереживание - Созидание',
@@ -369,17 +351,6 @@ def report(id):
         37: 'Мудрость - План блаженства',
         54: 'Выражение Бога через себя - Высшее сознание'
     }
-    for cell in printed_games:
-        if cell.id in arrow.keys():
-            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(arrow[cell.id])
-            if printed_games[cell] > 1:
-                form.text.data += bold(f' ({printed_games[cell]} р.)')
-            form.text.data += newline
-
-    form.text.data += p('_________________________________________________________________________________') + newline
-
-
-    form.text.data += p(Template.query.filter_by(name='condition').first().description)
     condition = {
         1: 'Рождение',
         3: 'Гнев',
@@ -415,17 +386,34 @@ def report(id):
         65: 'План внутреннего пространства',
 
     }
+    # for cell in printed_games:
+    #     if cell.id in snake.keys():
+    #         form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(snake[cell.id])
+    #         if printed_games[cell] > 1:
+    #             form.text.data += bold(f' ({printed_games[cell]} р.)')
+    #         form.text.data += newline
 
-    for cell in printed_games:
-        if cell.id in condition.keys():
-            form.text.data += Template.query.filter_by(name='emoji_cell_type').first().description + bold(condition[cell.id])
-            if printed_games[cell] > 1:
-                form.text.data += bold(f' ({printed_games[cell]} р.)')
-            form.text.data += newline
+    for game in games:
+        if game.cell.id in snake:
+            form.text.data += p(Template.query.filter_by(name='snake_emoji').first().description + " " + bold(snake[game.cell.id]))
 
-    form.text.data += p('_________________________________________________________________________________') + newline
+    form.text.data += p('_____________________________________________________________')
 
+    form.text.data += p(Template.query.filter_by(name='arrow').first().description)
 
-    form.text.data += p(bold('ФИНАЛЬНЫЙ КОММЕНТАРИЙ: ')) + p(i('Здесь вписывается финальный комментарий'))
+    for game in games:
+        if game.cell.id in arrow:
+            form.text.data += p(Template.query.filter_by(name='arrow_emoji').first().description + " " + bold(arrow[game.cell.id]))
 
+    form.text.data += p('_____________________________________________________________')
+
+    form.text.data += p(Template.query.filter_by(name='condition').first().description)
+
+    for game in games:
+        if game.cell.id in condition:
+            form.text.data += p(Template.query.filter_by(name='condition_emoji').first().description + " " + bold(condition[game.cell.id]))
+
+    form.text.data += p('_____________________________________________________________')
+
+    form.text.data += p(bold('ОТЧЕТ: ')) + p(i('Здесь вписывается финальный  комментарий'))
     return render_template('report.html', user=user, form=form)
