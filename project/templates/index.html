@@ -24,9 +24,14 @@
                 {{search_form.submit(class='button')}}
             </form>
             <div class="result">
-                {% for user in users%}
+                <!-- user is a Paginate object -->
+                {% for user in users.items%}
                 {% include  '_user.html'%}
                 {% endfor %}
+            </div>
+            <div class="pagination">
+                {% if users.has_prev %}<a href="{{ url_for('index', page = users.prev_num) }}"><< Newer posts</a>{% else %}<< Newer posts{% endif %} | 
+                {% if users.has_next %}<a href="{{ url_for('index', page = users.next_num) }}">Older posts >></a>{% else %}Older posts >>{% endif %}
             </div>
         </div>
 
@@ -59,7 +64,7 @@
                 </p>
                 <p>
                     {{add_form.birthday.label}}
-                    {{add_form.birthday(class='add_field')}}
+                    {{add_form.birthday(class='add_field', format="dd/mm/yyyy")}}
                 </p>
                 <p>
                     {{add_form.city.label}}

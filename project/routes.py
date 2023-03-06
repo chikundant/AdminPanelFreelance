@@ -13,14 +13,16 @@ from collections import Counter
 from docx import Document
 from htmldocx import HtmlToDocx
 
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
 @login_required
-def index():
+def index(page=1):
     search_form = SearchForm()
     add_form = AddUserForm()
 
-    users = User.query.order_by(User.id.desc()).all()
+    users = User.query.order_by(User.id.desc()).paginate(page=page, per_page=config.USERS_PER_PAGE, error_out=False)
 
     if add_form.validate_on_submit():
         user = User(name=add_form.name.data, email=add_form.email.data or None, phone=add_form.phone.data or None,
@@ -34,16 +36,16 @@ def index():
     if search_form.is_submitted():
         search = '%{}%'
         if search_form.input.data == '':
-            users = User.query.all()
-
+            users = User.query.order_by(User.id.desc()).paginate(page=page, per_page=config.USERS_PER_PAGE,
+                                                                 error_out=False)
         if search_form.type.data == '1':
-            users = User.query.filter(User.name.like(search.format(search_form.input.data))).all()
+            users = User.query.filter(User.name.like(search.format(search_form.input.data))).paginate(page=page, per_page=config.USERS_PER_PAGE, error_out=False)
 
         elif search_form.type.data == '2':
-            users = User.query.filter(User.email.like(search.format(search_form.input.data))).all()
+            users = User.query.filter(User.email.like(search.format(search_form.input.data))).paginate(page=page, per_page=config.USERS_PER_PAGE, error_out=False)
 
         elif search_form.type.data == '3':
-            users = User.query.filter(User.phone.like(search.format(search_form.input.data))).all()
+            users = User.query.filter(User.phone.like(search.format(search_form.input.data))).paginate(page=page, per_page=config.USERS_PER_PAGE, error_out=False)
 
 
     return render_template('index.html', search_form=search_form, add_form=add_form, users=users)
@@ -51,7 +53,7 @@ def index():
 
 @app.route('/user/<id>', methods=['GET', 'POST'])
 @login_required
-def user(id):
+async def user(id):
     user = User.query.filter_by(id=id).first()
 
     add_user_form = AddUserForm()
@@ -70,17 +72,18 @@ def user(id):
     if add_game_form.is_submitted():
         cell = Cell.query.filter_by(id=add_game_form.cell_id.data).first()
         if cell is not None:
-            game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data,
-                        user_comment=add_game_form.user_comment.data)
+            game = Game(cell_id=add_game_form.cell_id.data, personal_comment=add_game_form.my_comment.data.replace('\r\n', '<br>'),
+                        user_comment=add_game_form.user_comment.data.replace('\r\n', '<br>'))
             game.user_id = user.id
             db.session.add(game)
             db.session.commit()
         return redirect(url_for('user', id=id))
 
     games = Game.query.filter_by(user_id=user.id).order_by(Game.id.desc()).all()
+    users_block = User.query.filter_by(date=datetime.date.today()).all()
 
     return render_template('user.html', user=user, add_game_form=add_game_form, add_user_form=add_user_form,
-                           games=games)
+                           games=games, users_block=users_block)
 
 
 @app.route('/change_cell', methods=['GET', 'POST'])
@@ -119,7 +122,7 @@ def change_type():
     type_form = TypeForm()
 
     types = Type.query.all()
-    print(type_form.name_select.choices)
+
     for i in range(len(types)):
         type_form.name_select.choices.append((types[i].id, types[i].name))
 
@@ -184,10 +187,13 @@ def edit_game(id):
 
     if change_game_form.is_submitted():
         game.cell_id = change_game_form.cell_id.data
-        game.user_comment = change_game_form.user_comment.data
-        game.personal_comment = change_game_form.my_comment.data
+        game.user_comment = change_game_form.user_comment.data.replace('\r\n', '<br>')
+        game.personal_comment = change_game_form.my_comment.data.replace('\r\n', '<br>')
         db.session.commit()
         return redirect(url_for('user', id=game.user_id))
+
+    change_game_form.my_comment.data = game.personal_comment
+    change_game_form.user_comment.data = game.user_comment
 
     return render_template('edit_game.html', game=game, change_game_form=change_game_form)
 
@@ -234,21 +240,21 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    form = RegistrationForm()
-
-    if form.validate_on_submit():
-        user = Admin(username=form.username.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+#
+#     form = RegistrationForm()
+#
+#     if form.validate_on_submit():
+#         user = Admin(username=form.username.data)
+#         user.set_password(form.password.data)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash('Congratulations, you are now a registered user!')
+#         return redirect(url_for('login'))
+#     return render_template('register.html', form=form)
 
 
 @app.route('/logout')
@@ -271,7 +277,7 @@ def report(id):
 
         new_parser.add_html_to_document(html, document)
         document.save('project/report.docx')
-        file = '{}-{}.docx'.format(user.name, user.date)
+        file = 'ЛИЛА-{}-{}.docx'.format(user.name, user.date)
         return send_file('report.docx', as_attachment=True, download_name=file)
 
 
@@ -282,11 +288,11 @@ def report(id):
     h1 = lambda str: f'<h1>{str}</h1>'
     h2 = lambda str: f'<h2>{str}</h2>'
     p = lambda str: f'<p>{str}</p>'
-    d = str(user.date.strftime("%m.%d.%Y"))
+    d = str(user.date.strftime("%d.%m.%Y"))
 
     dbir = ''
     if user.birthday:
-        dbir = str(user.birthday.strftime("%m.%d.%Y"))
+        dbir = str(user.birthday.strftime("%d.%m.%Y"))
 
     form.text.data = p(h1(user.name + ' ' + d))
     form.text.data += newline
@@ -306,17 +312,21 @@ def report(id):
                 if game.user_comment:
                     form.text.data += p(bold('Твой комментарий: ') + p(game.user_comment + newline + newline))
 
+                if game.personal_comment:
+                        form.text.data += bold('Сообщение от Ксении: ') + p(game.personal_comment + newline + newline)
+
                 form.text.data += p('_____________________________________________________________')
             else:
 
                 form.text.data += p(h2(Template.query.filter_by(name='emoji_cell_title').first().description + str(game.cell.id) +  ' ' + game.cell.title) + newline)
                 if game.user_comment:
                     form.text.data += p(bold('Твой комментарий: ')) + p(game.user_comment + newline + newline)
+
+                if game.personal_comment:
+                        form.text.data += bold('Сообщение от Ксении: ') + p(game.personal_comment + newline + newline)
+                form.text.data += p(bold('О клетке: '))
+
                 form.text.data += game.cell.description
-
-                # if game.personal_comment:
-                #     form.text.data += bold('Мой комментарий: ') + newline + game.personal_comment + newline + newline
-
                 form.text.data += p('_____________________________________________________________')
 
             printed_games.append(game.cell.title)
@@ -388,6 +398,25 @@ def report(id):
         59: 'Реальность',
         64: 'Феноменальный план',
         65: 'План внутреннего пространства',
+        2: 'Обнуление',
+        4: 'Хотение',
+        6: 'Заблуждение',
+        7: 'Тщеславие',
+        8: 'Неудовлетворенность',
+        9: 'Чувственный план',
+        13: 'Ничтожность',
+        35: 'Чистилище',
+        51: 'Земля',
+        23: 'Уверенность',
+        32: 'План равновесия',
+        41: 'Реализация',
+        50: 'Преодоление',
+        60: 'Верно направленное сознание',
+        62: 'Счастье',
+        66: 'План блаженства',
+        67: 'Оставление концепций и отождествлений',
+        68: 'Высшее сознание',
+        69: 'Созидание'
 
     }
     # for cell in printed_games:

@@ -22,18 +22,22 @@
                 </div>
                 <div class="part">
                     <h1>Дата добавления:</h1>
-                    <p>{{ user.date }}</p>
+                    <p>{{ user.date.strftime("%d.%m.%Y")}}</p>
                 </div>
                 <div class="part">
                     <h1>День рождения:</h1>
-                    <p>{{ user.birthday }}</p>
+                    <p>
+                        {%if user.birthday%}
+                        {{ user.birthday.strftime("%d.%m.%Y")}}
+                        {%endif%}
+                    </p>
                 </div>
                 <div class="part">
                     <h1>Город:</h1>
                     <p>{{ user.city }}</p>
                 </div>
                 <div class="part">
-                    <h1>Комментарий:</h1>
+                    <h1>Запрос:</h1>
                     <p>{{ user.additional_comment }}</p>
                 </div>
             </div>
@@ -82,6 +86,15 @@
     </aside>
 
     <aside class="add_game">
+        <div class="user_links">
+            {%for user_ in users_block%}
+            {% if user.id == user_.id%}
+            <a href="{{url_for('user', id=user_.id)}}">{{user_.name}}</a>
+            {%else%}
+            <a href="{{url_for('user', id=user_.id)}}" style="background-color: rgb(92, 0, 167); color: white; border: 1px solid white;">{{user_.name}}</a>
+            {%endif%}
+            {% endfor %} 
+        </div>
         <form action="", method="post">
             
             <h1>Новая клетка</h1>

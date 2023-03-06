@@ -68,8 +68,8 @@ class AddGameForm(FlaskForm):
 
 class ChangeGameForm(FlaskForm):
     cell_id = StringField(validators=[DataRequired()])
-    user_comment = StringField()
-    my_comment = StringField()
+    user_comment = TextAreaField()
+    my_comment = TextAreaField()
 
     submit = SubmitField('Сохранить')
 

@@ -1,7 +1,6 @@
 .users_block{
 
     width: 85%;
-    height: 85vh;
     margin: 0px auto;
     margin-top: 50px;
 }
@@ -54,7 +53,7 @@
 
 .result{
     width: 100%;
-    height: 75vh;
+    height: 72vh;
 
     overflow: scroll;
 }
@@ -175,4 +174,9 @@
     left: 0;
     color: gray;
     position: absolute;
+}
+
+.pagination{
+    text-align: center;
+    margin-top: 15px;
 }

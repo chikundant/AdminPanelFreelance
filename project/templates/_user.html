@@ -15,8 +15,12 @@
                 <td>{{user.name}}</td>
                 <td>{{user.email}}</td>
                 <td>{{user.phone}}</td>
-                <td>{{user.date}}</td>
-                <td>{{user.birthday}}</td>
+                <td>{{user.date.strftime("%d.%m.%Y")}}</td>
+                <td>
+                    {%if user.birthday%}
+                    {{ user.birthday.strftime("%d.%m.%Y")}}
+                    {%endif%}
+                </td>
                 <td class="buttons">
                     <a href="{{ url_for('user', id=user.id) }}" class="button">В игру</a>
                     

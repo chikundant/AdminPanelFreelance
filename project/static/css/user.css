@@ -171,3 +171,24 @@ aside{
 p{
     padding: 0px;
 }
+
+.user_links{
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap:wrap
+}
+
+.user_links a{
+    display: block;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    background-color: white;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.selected{
+    background-color: rgb(92, 0, 167);
+    color: white;
+    border: white;
+}

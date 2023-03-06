@@ -2,6 +2,8 @@ import os
 
 KEY = 'you-will-never-guess'
 basedir = os.path.abspath(os.path.dirname(__file__))
+USERS_PER_PAGE = 10
+
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or KEY
