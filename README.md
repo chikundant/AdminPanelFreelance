@@ -1,4 +1,7 @@
 # App which made for game's host
+
+![Screenshot_3](https://user-images.githubusercontent.com/46445767/227730497-0eb2eaad-affd-48f6-b2ad-9711c3f3125b.png)
+
 <hr>
 
 Game host can:
