@@ -1,6 +1,6 @@
 import os
 
-KEY = 'you-will-never-guess'
+KEY = 'Your key here'
 basedir = os.path.abspath(os.path.dirname(__file__))
 USERS_PER_PAGE = 10
 
